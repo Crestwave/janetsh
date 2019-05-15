@@ -43,16 +43,18 @@ EOF
   return "$ok"
 }
 
-echo "Looking for janet headers..."
-if ! check_janet_headers
-then
-  echo "janet headers not found, trying pkg-config..."
-  janetheadercflags=$(pkg-config --cflags janet)
-fi
-if ! check_janet_headers
-then
-  fail "unable to find working janet headers."
-  exit 1
+if [ -z "$janetheadercflags" ]; then
+  echo "Looking for janet headers..."
+  if ! check_janet_headers
+  then
+    echo "janet headers not found, trying pkg-config..."
+    janetheadercflags=$(pkg-config --cflags janet)
+  fi
+  if ! check_janet_headers
+  then
+    fail "unable to find working janet headers."
+    exit 1
+  fi
 fi
 
 CFLAGS="-fPIC ${CFLAGS} ${janetheadercflags}"
